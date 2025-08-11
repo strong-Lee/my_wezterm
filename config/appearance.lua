@@ -1,8 +1,16 @@
+-- ~/.config/wezterm/config/appearance.lua
+-- 外观模块
+-- 控制 WezTerm 的所有视觉元素，如颜色、字体渲染、透明度、窗口边距、标签栏等
+
 local gpu_adapters = require('utils.gpu-adapter')
-local backdrops = require('utils.backdrops')
+-- local backdrops = require('utils.backdrops')
 local colors = require('colors.custom')
+local wezterm = require('wezterm') -- 确保 wezterm 被引入
 
 return {
+   -- ==================================================
+   -- 1. 渲染与性能设置 (以远程版本为基础)
+   -- ==================================================
    max_fps = 120,
    front_end = 'WebGpu',
    webgpu_power_preference = 'HighPerformance',
@@ -11,21 +19,26 @@ return {
    -- webgpu_preferred_adapter = gpu_adapters:pick_manual('Gl', 'Other'),
    underline_thickness = '1.5pt',
 
-   -- cursor
+   -- ==================================================
+   -- 2. 颜色与背景 (以远程版本为基础)
+   -- ==================================================
+   color_scheme = 'Catppuccin Mocha',
+   colors = colors,
+
+   -- background
+   -- background = backdrops:initial_options(false), -- set to true if you want wezterm to start on focus mode
+
+   -- scrollbar
+   enable_scroll_bar = true,
+
+   -- ==================================================
+   -- 3. 光标与滚动条 (以远程版本为基础)
+   -- ==================================================
    animation_fps = 120,
    cursor_blink_ease_in = 'EaseOut',
    cursor_blink_ease_out = 'EaseOut',
    default_cursor_style = 'BlinkingBlock',
    cursor_blink_rate = 650,
-
-   -- color scheme
-   colors = colors,
-
-   -- background
-   background = backdrops:initial_options(false), -- set to true if you want wezterm to start on focus mode
-
-   -- scrollbar
-   enable_scroll_bar = true,
 
    -- tab bar
    enable_tab_bar = true,
