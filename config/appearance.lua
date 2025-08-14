@@ -1,81 +1,43 @@
 -- ~/.config/wezterm/config/appearance.lua
--- 外观模块
--- 控制 WezTerm 的所有视觉元素，如颜色、字体渲染、透明度、窗口边距、标签栏等
 
-local gpu_adapters = require('utils.gpu-adapter')
--- local backdrops = require('utils.backdrops')
-local colors = require('colors.custom')
 local wezterm = require('wezterm') -- 确保 wezterm 被引入
+-- #1a1b26 是 Tokyo Night 的深蓝背景，相比纯黑更有层次感
+local background_color = 'rgba(26, 27, 38, 0.70)'
 
 return {
-   -- ==================================================
-   -- 1. 渲染与性能设置 (以远程版本为基础)
-   -- ==================================================
-   max_fps = 120,
-   front_end = 'WebGpu',
-   webgpu_power_preference = 'HighPerformance',
-   webgpu_preferred_adapter = gpu_adapters:pick_best(),
-   -- webgpu_preferred_adapter = gpu_adapters:pick_manual('Dx12', 'IntegratedGpu'),
-   -- webgpu_preferred_adapter = gpu_adapters:pick_manual('Gl', 'Other'),
-   underline_thickness = '1.5pt',
-
-   -- ==================================================
-   -- 2. 颜色与背景 (以远程版本为基础)
-   -- ==================================================
-   color_scheme = 'Catppuccin Mocha',
-   colors = colors,
-
-   -- background
-   -- background = backdrops:initial_options(false), -- set to true if you want wezterm to start on focus mode
-
-   -- scrollbar
-   enable_scroll_bar = true,
-
-   -- ==================================================
-   -- 3. 光标与滚动条 (以远程版本为基础)
-   -- ==================================================
-   animation_fps = 120,
-   cursor_blink_ease_in = 'EaseOut',
-   cursor_blink_ease_out = 'EaseOut',
-   default_cursor_style = 'BlinkingBlock',
-   cursor_blink_rate = 650,
-
-   -- tab bar
-   enable_tab_bar = true,
-   hide_tab_bar_if_only_one_tab = false,
-   use_fancy_tab_bar = false,
-   tab_max_width = 25,
-   show_tab_index_in_tab_bar = false,
-   switch_to_last_active_tab_when_closing_tab = true,
-
-   -- window
-   window_padding = {
-      left = 0,
-      right = 0,
-      top = 10,
-      bottom = 7.5,
+   -- 配合无边框，启用macOS原生毛玻璃背景
+   macos_window_background_blur = 80, -- 数值越高越模糊
+   -- 我们将使用 Catppuccin 的 mantle 色作为基础，并增加 alpha 通道
+   background = {
+      {
+         source = { Color = background_color },
+         height = '100%',
+         width = '100%',
+      },
    },
+   window_decorations = 'RESIZE', -- 仅保留窗口大小调整功能
+   -- 在窗口顶部增加内边距，为自定义的 "标题栏" 留出空间
+   -- 同时也让整体布局更有呼吸感
+   window_padding = {
+      left = 15,
+      right = 15,
+      top = 20,
+      bottom = 10,
+   },
+   -- 在左上角添加macOS风格的红绿灯按钮
+   --window_buttons = {
+   --   -- 你可以调整X, Y坐标来微调按钮位置
+   --   position = 'TopLeft',
+   --   style = 'macOS',
+   --},
+
+   -- 优化非激活窗格的视觉区分，使其变暗但不过于饱和
+   -- 1.0 的 brightness 意味着没有变化，这不实用
+   inactive_pane_hsb = {
+      saturation = 0.8,
+      brightness = 0.6,
+   },
+   -- 其他实用配置
    adjust_window_size_when_changing_font_size = false,
    window_close_confirmation = 'NeverPrompt',
-   window_frame = {
-      active_titlebar_bg = '#090909',
-      -- font = fonts.font,
-      -- font_size = fonts.font_size,
-   },
-   -- inactive_pane_hsb = {
-   --    saturation = 0.9,
-   --    brightness = 0.65,
-   -- },
-   inactive_pane_hsb = {
-      saturation = 1,
-      brightness = 1,
-   },
-
-   visual_bell = {
-      fade_in_function = 'EaseIn',
-      fade_in_duration_ms = 250,
-      fade_out_function = 'EaseOut',
-      fade_out_duration_ms = 250,
-      target = 'CursorColor',
-   },
 }
