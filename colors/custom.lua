@@ -3,8 +3,11 @@
 local theme = {
    fg = '#c0caf5',
    bg = '#1a1b26',
-   -- 我们想要的那个高亮青色，将作为激活标签的文字颜色
-   bright_cyan = '#7dcfff',
+   bright_cyan = '#7dcfff', -- 高亮青色
+   bright_blue = '#7aa2f7', -- 高亮蓝色，用于leader指示器
+   dark_grey = '#414868', -- 暗灰色
+   light_grey = '#565f89', -- 亮灰色
+   red = '#f7768e', -- 红色
 
    cursor_bg = '#7dcfff',
    cursor_fg = '#1a1b26',
@@ -26,6 +29,7 @@ local theme = {
    scrollbar_thumb = '#414868',
 }
 
+-- 这是最终返回给 Wezterm 的配置表
 return {
    foreground = theme.fg,
    background = theme.bg,
@@ -39,11 +43,9 @@ return {
    split = theme.split,
    scrollbar_thumb = theme.scrollbar_thumb,
 
-   -- =============================================================
-   -- [[ THE FINAL AND CORRECT TAB BAR CONFIGURATION ]]
-   -- =============================================================
+   -- 2. Tab栏颜色，更适合无边框设计 (Wezterm UI 元素)
    tab_bar = {
-      background = 'none', -- 背景与主窗口融合
+      background = 'rgba(26, 27, 38, 0.5)',
 
       -- 核心改变在这里：
       -- 我们不再尝试画任何不存在的边框或下划线。
@@ -57,20 +59,27 @@ return {
 
       inactive_tab = {
          bg_color = 'none',
-         fg_color = '#565f89',
+         fg_color = theme.light_grey,
       },
       inactive_tab_hover = {
          bg_color = 'none',
-         fg_color = '#c0caf5',
+         fg_color = theme.fg,
+         italic = true,
       },
       new_tab = {
          bg_color = 'none',
-         fg_color = '#565f89',
+         fg_color = theme.light_grey,
       },
       new_tab_hover = {
          bg_color = 'rgba(42, 44, 55, 0.7)',
-         fg_color = '#c0caf5',
+         fg_color = theme.fg,
          italic = true,
       },
    },
+
+   -- 3. 搜索高亮颜色 (CORRECTED: 这是一个独立的顶级配置项)
+   -- search_match_colors = {
+   --    background = 'rgba(255, 165, 0, 0.5)',
+   --    foreground = theme.bg,
+   -- },
 }

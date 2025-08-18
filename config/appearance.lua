@@ -1,12 +1,11 @@
 -- ~/.config/wezterm/config/appearance.lua
 
-local wezterm = require('wezterm') -- 确保 wezterm 被引入
 -- #1a1b26 是 Tokyo Night 的深蓝背景，相比纯黑更有层次感
-local background_color = 'rgba(26, 27, 38, 0.70)'
+local background_color = 'rgba(26, 27, 38, 0.75)'
 
 return {
    -- 配合无边框，启用macOS原生毛玻璃背景
-   macos_window_background_blur = 80, -- 数值越高越模糊
+   macos_window_background_blur = 100, -- 数值越高越模糊
    -- 我们将使用 Catppuccin 的 mantle 色作为基础，并增加 alpha 通道
    background = {
       {
@@ -21,7 +20,7 @@ return {
    window_padding = {
       left = 15,
       right = 15,
-      top = 20,
+      top = 25,
       bottom = 10,
    },
    -- 在左上角添加macOS风格的红绿灯按钮
@@ -40,4 +39,5 @@ return {
    -- 其他实用配置
    adjust_window_size_when_changing_font_size = false,
    window_close_confirmation = 'NeverPrompt',
+   enable_tab_bar = true, -- 确保标签栏是开启的
 }

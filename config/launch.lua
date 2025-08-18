@@ -1,3 +1,5 @@
+-- ~/.config/wezterm/config/launch.lua
+
 local platform = require('utils.platform')
 
 local options = {

@@ -1,3 +1,5 @@
+-- ~/.config/wezterm/events/new-tab-button.lua
+
 local wezterm = require('wezterm')
 local launch_menu = require('config.launch').launch_menu
 local domains = require('config.domains')
@@ -104,7 +106,7 @@ M.setup = function()
                choices = choices,
                fuzzy = true,
                fuzzy_description = nf.md_rocket .. ' Select a lauch item: ',
-               action = wezterm.action_callback(function(_window, _pane, id, label)
+               action = wezterm.action_callback(function(_, _, id, label)
                   if not id and not label then
                      return
                   else

@@ -58,5 +58,19 @@ return {
       { key = 'J', mods = 'LEADER|SHIFT', action = act.AdjustPaneSize({ 'Down', 5 }) },
       { key = 'K', mods = 'LEADER|SHIFT', action = act.AdjustPaneSize({ 'Up', 5 }) },
       { key = 'L', mods = 'LEADER|SHIFT', action = act.AdjustPaneSize({ 'Right', 5 }) },
+
+      -- 为Neovim用户准备的Vim式复制模式
+      {
+         key = 'c',
+         mods = 'LEADER',
+         action = act.ActivateCopyMode,
+      },
+
+      -- 快速选择模式，用于快速打开URL
+      {
+         key = 'u',
+         mods = 'LEADER',
+         action = act.QuickSelect,
+      },
    },
 }

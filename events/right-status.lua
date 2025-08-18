@@ -1,117 +1,85 @@
+-- ~/.config/wezterm/events/right-status.lua
+
 local wezterm = require('wezterm')
-local umath = require('utils.math')
-local Cells = require('utils.cells')
-local OptsValidator = require('utils.opts-validator')
-
----@alias Event.RightStatusOptions { date_format?: string }
-
----Setup options for the right status bar
-local EVENT_OPTS = {}
-
----@type OptsSchema
-EVENT_OPTS.schema = {
-   {
-      name = 'date_format',
-      type = 'string',
-      default = '%a %H:%M:%S',
-   },
-}
-EVENT_OPTS.validator = OptsValidator:new(EVENT_OPTS.schema)
-
 local nf = wezterm.nerdfonts
-local attr = Cells.attr
-
 local M = {}
 
-local ICON_SEPARATOR = nf.oct_dash
-local ICON_DATE = nf.fa_calendar
-
----@type string[]
-local discharging_icons = {
-   nf.md_battery_10,
-   nf.md_battery_20,
-   nf.md_battery_30,
-   nf.md_battery_40,
-   nf.md_battery_50,
-   nf.md_battery_60,
-   nf.md_battery_70,
-   nf.md_battery_80,
-   nf.md_battery_90,
-   nf.md_battery,
-}
----@type string[]
-local charging_icons = {
-   nf.md_battery_charging_10,
-   nf.md_battery_charging_20,
-   nf.md_battery_charging_30,
-   nf.md_battery_charging_40,
-   nf.md_battery_charging_50,
-   nf.md_battery_charging_60,
-   nf.md_battery_charging_70,
-   nf.md_battery_charging_80,
-   nf.md_battery_charging_90,
-   nf.md_battery_charging,
-}
-
----@type table<string, Cells.SegmentColors>
--- stylua: ignore
 local colors = {
-   date      = { fg = '#fab387', bg = 'rgba(0, 0, 0, 0.4)' },
-   battery   = { fg = '#f9e2af', bg = 'rgba(0, 0, 0, 0.4)' },
-   separator = { fg = '#74c7ec', bg = 'rgba(0, 0, 0, 0.4)' }
+   cpu_fg = '#a3be8c',
+   mem_fg = '#d08770',
+   net_fg = '#88c0d0',
+   battery_fg = '#ebcb8b',
+   date_fg = '#d8dee9',
+   separator_fg = '#4c566a',
 }
 
-local cells = Cells:new()
-
-cells
-   :add_segment('date_icon', ICON_DATE .. '  ', colors.date, attr(attr.intensity('Bold')))
-   :add_segment('date_text', '', colors.date, attr(attr.intensity('Bold')))
-   :add_segment('separator', ' ' .. ICON_SEPARATOR .. '  ', colors.separator)
-   :add_segment('battery_icon', '', colors.battery)
-   :add_segment('battery_text', '', colors.battery, attr(attr.intensity('Bold')))
-
----@return string, string
-local function battery_info()
-   -- ref: https://wezfurlong.org/wezterm/config/lua/wezterm/battery_info.html
-
-   local charge = ''
-   local icon = ''
-
-   for _, b in ipairs(wezterm.battery_info()) do
-      local idx = umath.clamp(umath.round(b.state_of_charge * 10), 1, 10)
-      charge = string.format('%.0f%%', b.state_of_charge * 100)
-
-      if b.state == 'Charging' then
-         icon = charging_icons[idx]
-      else
-         icon = discharging_icons[idx]
-      end
-   end
-
-   return charge, icon .. ' '
+-- CPU & 内存
+local function cpu_mem_info()
+   local cpu = io.popen("top -l 1 | grep 'CPU usage' | awk '{print $3}'"):read('*a')
+   local mem = io.popen("vm_stat | grep 'Pages free' | awk '{print $3}'"):read('*a')
+   cpu = cpu:gsub('\n', '')
+   mem = mem:gsub('\n', '')
+   return string.format('%s %s%%  %s %s', nf.md_cpu_64_bit, cpu or '?', nf.md_memory, mem or '?')
 end
 
----@param opts? Event.RightStatusOptions Default: {date_format = '%a %H:%M:%S'}
-M.setup = function(opts)
-   local valid_opts, err = EVENT_OPTS.validator:validate(opts or {})
-
-   if err then
-      wezterm.log_error(err)
+-- 网络（WiFi 名称 + IP）
+local function net_info()
+   local wifi =
+      io.popen("networksetup -getairportnetwork en0 2>/dev/null | awk -F': ' '{print $2}'")
+         :read('*a')
+   local ip = io.popen('ipconfig getifaddr en0 2>/dev/null'):read('*a')
+   wifi = wifi:gsub('\n', '')
+   ip = ip:gsub('\n', '')
+   if wifi ~= '' and ip ~= '' then
+      return string.format('%s %s (%s)', nf.md_wifi, wifi, ip)
    end
+   return ''
+end
 
-   wezterm.on('update-right-status', function(window, _pane)
-      local battery_text, battery_icon = battery_info()
+-- 电池
+local function battery_info()
+   for _, b in ipairs(wezterm.battery_info()) do
+      local icon = nf.md_battery
+      local charge = math.floor(b.state_of_charge * 100)
+      if b.state == 'Charging' then
+         icon = nf.md_battery_charging
+      elseif charge < 20 then
+         icon = nf.md_battery_20
+      elseif charge < 50 then
+         icon = nf.md_battery_50
+      elseif charge < 80 then
+         icon = nf.md_battery_80
+      end
+      return string.format('%s %d%%', icon, charge)
+   end
+   return ''
+end
 
-      cells
-         :update_segment_text('date_text', wezterm.strftime(valid_opts.date_format))
-         :update_segment_text('battery_icon', battery_icon)
-         :update_segment_text('battery_text', battery_text)
+M.setup = function()
+   wezterm.on('update-right-status', function(window, _)
+      --local cpu_mem = cpu_mem_info()
+      local net = net_info()
+      local battery = battery_info()
+      local date = wezterm.strftime('%Y-%m-%d %H:%M:%S')
 
-      window:set_right_status(
-         wezterm.format(
-            cells:render({ 'date_icon', 'date_text', 'separator', 'battery_icon', 'battery_text' })
-         )
-      )
+      local right = wezterm.format({
+         --{ Foreground = { Color = colors.cpu_fg } },
+         --{ Text = cpu_mem },
+         --{ Foreground = { Color = colors.separator_fg } },
+         --{ Text = ' │ ' },
+         { Foreground = { Color = colors.net_fg } },
+         { Text = net },
+         { Foreground = { Color = colors.separator_fg } },
+         { Text = ' │ ' },
+         { Foreground = { Color = colors.battery_fg } },
+         { Text = battery },
+         { Foreground = { Color = colors.separator_fg } },
+         { Text = ' │ ' },
+         { Foreground = { Color = colors.date_fg } },
+         { Text = ' ' .. date .. ' ' }, -- 两边加空格
+      })
+
+      window:set_right_status(right)
    end)
 end
 
