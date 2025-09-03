@@ -1,36 +1,56 @@
 -- ~/.config/wezterm/colors/custom.lua
+-- Everforest Dark Soft Palette
 
 local theme = {
-   fg = '#c0caf5',
-   bg = '#1a1b26',
-   bright_cyan = '#7dcfff', -- 高亮青色
-   bright_blue = '#7aa2f7', -- 高亮蓝色，用于leader指示器
-   dark_grey = '#414868', -- 暗灰色
-   light_grey = '#565f89', -- 亮灰色
-   red = '#f7768e', -- 红色
+   -- Base Palette (from official Everforest palette)
+   bg = '#323d43', -- Background (bg_soft)
+   fg = '#d3c6aa', -- Foreground
+   red = '#e67e80',
+   green = '#a7c080',
+   yellow = '#dbbc7f',
+   blue = '#7fbbb3',
+   purple = '#d699b6',
+   aqua = '#83c092',
+   grey = '#a9b1d6', -- Using a standard grey from your old theme for general purpose
+   dark_grey = '#4f585e', -- bg2
+   light_grey = '#859289', -- fg_dim
 
-   cursor_bg = '#7dcfff',
-   cursor_fg = '#1a1b26',
-   cursor_border = '#7dcfff',
-   selection_bg = '#2e3c6c',
-   selection_fg = '#c0caf5',
-   ansi = { '#15161e', '#f7768e', '#9ece6a', '#e0af68', '#7aa2f7', '#bb9af7', '#7dcfff', '#a9b1d6' },
-   brights = {
-      '#414868',
-      '#f7768e',
-      '#9ece6a',
-      '#e0af68',
-      '#7aa2f7',
-      '#bb9af7',
-      '#7dcfff',
-      '#c0caf5',
+   -- UI Elements
+   cursor_bg = '#a7c080', -- Green for good visibility
+   cursor_fg = '#323d43',
+   cursor_border = '#a7c080',
+   selection_bg = '#4f585e', -- bg2, a darker grey for selection
+   selection_fg = '#d3c6aa',
+   split = '#4f585e',
+   scrollbar_thumb = '#4f585e',
+
+   -- ANSI Colors
+   ansi = {
+      '#414b50', -- Black (bg1)
+      '#e67e80', -- Red
+      '#a7c080', -- Green
+      '#dbbc7f', -- Yellow
+      '#7fbbb3', -- Blue
+      '#d699b6', -- Purple
+      '#83c092', -- Aqua
+      '#d3c6aa', -- White (fg)
    },
-   split = '#414868',
-   scrollbar_thumb = '#414868',
+   -- Bright ANSI Colors
+   brights = {
+      '#4f585e', -- Bright Black (bg2)
+      '#e67e80', -- Bright Red
+      '#a7c080', -- Bright Green
+      '#dbbc7f', -- Bright Yellow
+      '#7fbbb3', -- Bright Blue
+      '#d699b6', -- Bright Purple
+      '#83c092', -- Bright Aqua
+      '#d3c6aa', -- Bright White (fg)
+   },
 }
 
 -- 这是最终返回给 Wezterm 的配置表
 return {
+   -- 1. 基本颜色配置
    foreground = theme.fg,
    background = theme.bg,
    cursor_bg = theme.cursor_bg,
@@ -43,43 +63,40 @@ return {
    split = theme.split,
    scrollbar_thumb = theme.scrollbar_thumb,
 
-   -- 2. Tab栏颜色，更适合无边框设计 (Wezterm UI 元素)
+   -- 2. Tab栏颜色，适配 Everforest 风格
    tab_bar = {
-      background = 'rgba(26, 27, 38, 0.5)',
+      -- 使用背景色加上一点透明度，与背景融为一体
+      background = 'rgba(50, 61, 67, 0.5)', -- rgba version of theme.bg
 
-      -- 核心改变在这里：
-      -- 我们不再尝试画任何不存在的边框或下划线。
-      -- 我们直接把激活标签的文字颜色变成最醒目的高亮青色。
-      -- 这才是正确且符合设计理念的做法。
+      -- 激活的标签页
       active_tab = {
-         bg_color = 'rgba(122, 162, 247, 0.2)', -- 保留淡淡的背景光晕
-         fg_color = theme.bright_cyan, -- **使用高亮青色作为文字颜色**
-         intensity = 'Bold', -- 并且加粗
+         -- 使用一个柔和的背景高亮
+         bg_color = 'rgba(127, 187, 179, 0.2)', -- rgba version of theme.blue
+         -- 使用醒目的绿色作为文字颜色，这是 Everforest 的标志性颜色之一
+         fg_color = theme.green,
+         intensity = 'Bold',
       },
 
+      -- 未激活的标签页
       inactive_tab = {
          bg_color = 'none',
-         fg_color = theme.light_grey,
+         fg_color = theme.light_grey, -- 使用暗一点的前景色
       },
       inactive_tab_hover = {
          bg_color = 'none',
          fg_color = theme.fg,
          italic = true,
       },
+
+      -- 新建标签页按钮
       new_tab = {
          bg_color = 'none',
          fg_color = theme.light_grey,
       },
       new_tab_hover = {
-         bg_color = 'rgba(42, 44, 55, 0.7)',
+         bg_color = 'rgba(79, 88, 94, 0.7)', -- rgba version of theme.dark_grey
          fg_color = theme.fg,
          italic = true,
       },
    },
-
-   -- 3. 搜索高亮颜色 (CORRECTED: 这是一个独立的顶级配置项)
-   -- search_match_colors = {
-   --    background = 'rgba(255, 165, 0, 0.5)',
-   --    foreground = theme.bg,
-   -- },
 }
