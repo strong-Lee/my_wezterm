@@ -1,0 +1,163 @@
+# ~/.starship.toml
+
+# =======================
+#  全局配置 (Global Settings)
+# =======================
+# 每次提示符前添加一个空行，视觉上更清晰
+add_newline = true
+# 将命令超时时间设置为 2 秒 (2000 毫秒)，避免因网络或系统卡顿导致不必要的警告
+command_timeout = 2000
+
+# =======================
+#  提示符格式 (Format)
+#  这是核心！我们只保留你需要的模块，并用换行符分隔，结构清晰。
+# =======================
+format = """
+[╭─](subtext0)\
+$directory\
+$git_branch\
+$git_status
+[╰─](subtext0)\
+$all\
+$character
+"""
+
+# 使用 `[╭─](subtext0)` 和 `[╰─](subtext0)` 创建了一个优雅的边框效果。
+# `$all` 是一个特殊的占位符，它会显示所有未在 format 字符串中明确提及的模块。
+# 我们会在下面通过 `scan_timeout` 和 `disabled` 模块来精确控制 `$all` 的内容。
+
+# =======================
+#  调色板 (Palette)
+#  我们只保留你正在使用的 `mocha` 主题，删除其他所有 `[palettes.*]` 部分。
+# =======================
+palette = "catppuccin_mocha"
+
+[palettes.catppuccin_mocha]
+rosewater = "#f5e0dc"
+flamingo = "#f2cdcd"
+pink = "#f5c2e7"
+mauve = "#cba6f7"
+red = "#f38ba8"
+maroon = "#eba0ac"
+peach = "#fab387"
+yellow = "#f9e2af"
+green = "#a6e3a1"
+teal = "#94e2d5"
+sky = "#89dceb"
+sapphire = "#74c7ec"
+blue = "#89b4fa"
+lavender = "#b4befe"
+text = "#cdd6f4"
+subtext1 = "#bac2de"
+subtext0 = "#a6adc8"
+overlay2 = "#9399b2"
+overlay1 = "#7f849c"
+overlay0 = "#6c7086"
+surface2 = "#585b70"
+surface1 = "#45475a"
+surface0 = "#313244"
+base = "#1e1e2e"
+mantle = "#181825"
+crust = "#11111b"
+
+# ================================================
+#  模块具体配置 (Module Configurations)
+#  这里是你从旧配置中复制过来的、你喜欢的个性化设置
+# ================================================
+
+# --- 核心模块 ---
+[directory]
+home_symbol = "⌂"
+truncation_length = 2
+truncation_symbol = "▦ "
+read_only = " ■"
+style = "blue"
+format = '[$path]($style)[$read_only]($read_only_style)'
+
+[git_branch]
+format = "[ $symbol $branch]($style)" # 稍微简化了格式
+symbol = "[](bold blue)"
+style = "bold blue"
+
+[git_status]
+style = "blue"
+format = '([$all_status$ahead_behind]($style))' # 使用 $all_status 简化
+conflicted = "[!](bold red)"
+ahead = "[↑${count}](bold green)"
+behind = "[↓${count}](bold red)"
+diverged = "⇕[↑${ahead_count}↓${behind_count}](bold yellow)"
+untracked = "[?](bold yellow)"
+stashed = "[$](bold cyan)"
+modified = "[M](bold yellow)"
+staged = '[+](bold green)'
+renamed = '[»](bold cyan)'
+deleted = '[x](bold red)'
+
+[character]
+success_symbol = "[❯](green)"
+error_symbol = "[❯](red)"
+
+# --- 你的语言模块 ---
+[php]
+format = "via [🐘 $version](lavender bold)" # 使用大象图标
+symbol = "PHP"
+
+[python]
+format = 'via [${symbol}${pyenv_prefix}(${version} )(\($virtualenv\) )]($style)'
+symbol = "🐍 "
+style = "yellow bold"
+
+[c]
+format = "via [C ($version)](text bold)"
+symbol = "C"
+
+[nodejs]
+format = "via [󰎙 $version](green bold)"
+# 如果你不需要看到 Node.js 版本，可以把下面这行注释掉
+disabled = false
+
+# --- 可选工具模块 ---
+[cmd_duration]
+min_time = 500
+format = "took [$duration](yellow bold)"
+
+# --- 禁用你不关心的所有其他模块 ---
+# 通过将它们标记为 disabled，它们就不会被 `$all` 显示，也根本不会被 Starship 检查，
+# 这能稍微提升一点点性能。
+[aws]
+disabled = true
+[cobol]
+disabled = true
+[dart]
+disabled = true
+[deno]
+disabled = true
+[dotnet]
+disabled = true
+[elixir]
+disabled = true
+[elm]
+disabled = true
+[erlang]
+disabled = true
+[golang]
+disabled = true
+[haskell]
+disabled = true
+[java]
+disabled = true
+[julia]
+disabled = true
+[kotlin]
+disabled = true
+[lua]
+disabled = true
+[ocaml]
+disabled = true
+[perl]
+disabled = true
+[ruby]
+disabled = true
+[rust]
+disabled = true
+# ... 你可以继续添加任何你确定不用的语言 ...
