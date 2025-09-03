@@ -10,7 +10,7 @@ local font_size = platform.is_mac and 15 or 9
 return {
    font = wezterm.font({
       family = font_family,
-      weight = 'Medium',
+      weight = 600, -- 公司电脑为SemiBold 家里Medium
    }),
    font_size = font_size,
    line_height = 1, -- 增加行高可以提升长篇文章的可读性

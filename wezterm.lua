@@ -14,8 +14,12 @@ local config = Config:init()
    :append(require('config.launch'))
    :append({
       -- 直接在这里整合颜色配置
+      -- 1. 首先，使用 color_schemes (带s) 来定义你的自定义方案
+      color_schemes = {
+         custom = require('colors.custom'),
+      },
+      -- 2. 然后，使用 color_scheme (不带s) 来激活你刚刚定义的方案
       color_scheme = 'custom',
-      colors = require('colors.custom'),
    }).options
 
 -- 动态全屏功能实现
